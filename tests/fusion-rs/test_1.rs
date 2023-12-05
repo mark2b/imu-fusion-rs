@@ -10,8 +10,8 @@ mod tests {
         let mut ahrs_settings = FusionAhrsSettings::new();
         ahrs_settings.convention = NWU;
         ahrs_settings.gain = 0.5f32;
-        ahrs_settings.acceleration_rejection = 10.0f32;
-        ahrs_settings.magnetic_rejection = 20.0f32;
+        ahrs_settings.acc_rejection = 10.0f32;
+        ahrs_settings.mag_rejection = 20.0f32;
 
         let mut fusion = Fusion::new(25, ahrs_settings);
         writer.write_record(&["dt", "euler_yaw", "euler_pitch", "euler_roll", "earth_acc_x", "earth_acc_y", "earth_acc_z", "q_w", "q_x", "q_y", "q_z"]).unwrap();

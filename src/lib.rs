@@ -53,24 +53,10 @@ pub struct FusionAhrs {
 pub struct FusionAhrsSettings {
     pub convention: FusionConvention,
     pub gain: f32,
-    pub gyroscope_range: f32,
-    pub acceleration_rejection: f32,
-    pub magnetic_rejection: f32,
+    pub gyr_range: f32,
+    pub acc_rejection: f32,
+    pub mag_rejection: f32,
     pub recovery_trigger_period: i32,
-}
-
-#[derive(Copy, Clone)]
-pub struct Axis {
-    pub(crate) x: f32,
-    pub(crate) y: f32,
-    pub(crate) z: f32,
-}
-
-#[derive(Copy, Clone)]
-struct Axis2 {
-    x: Axis,
-    y: Axis,
-    z: Axis,
 }
 
 #[derive(Copy, Clone)]
@@ -90,16 +76,24 @@ pub struct Angle {
 
 #[derive(Copy, Clone)]
 #[allow(dead_code)]
-pub union FusionVector {
-    pub(crate) data: [f32; 3],
-    pub axis: Axis,
+pub struct FusionVector {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 #[derive(Copy, Clone)]
 #[allow(dead_code)]
-pub union FusionMatrix {
-    data: [[f32; 3]; 3],
-    element: Axis2,
+pub struct FusionMatrix {
+    pub xx: f32,
+    pub xy: f32,
+    pub xz: f32,
+    pub yx: f32,
+    pub yy: f32,
+    pub yz: f32,
+    pub zx: f32,
+    pub zy: f32,
+    pub zz: f32,
 }
 
 #[derive(Copy, Clone)]

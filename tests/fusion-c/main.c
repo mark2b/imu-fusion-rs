@@ -82,10 +82,10 @@ int main(void) {
 
         fprintf(out, "%.8f,%.8f,%.8f,%.8f,%.8f,%.8f,%.8f,%.8f,%.8f,%.8f,%.8f\n", t,
                euler.angle.yaw, euler.angle.pitch, euler.angle.roll,
-               earth.axis.x, earth.axis.y, earth.axis.z, q.array[0], q.array[1], q.array[2], q.array[3]);
+               earth.x, earth.y, earth.z, q.array[0], q.array[1], q.array[2], q.array[3]);
         printf("%.8f,%.8f,%.8f,%.8f,%.8f,%.8f,%.8f,%.8f,%.8f,%.8f,%.8f\n", t,
                euler.angle.yaw, euler.angle.pitch, euler.angle.roll,
-               earth.axis.x, earth.axis.y, earth.axis.z, q.array[0], q.array[1], q.array[2], q.array[3]);
+               earth.x, earth.y, earth.z, q.array[0], q.array[1], q.array[2], q.array[3]);
         last_t = t;
     }
 }

@@ -6,6 +6,14 @@ edition = "2021"
 [features]
 fusion-use-normal-sqrt = []
 
+[[example]]
+name = "simple"
+path = "examples/simple.rs"
+
+[[example]]
+name = "advanced"
+path = "examples/advanced.rs"
+
 [[test]]
 name = "test-1"
 path = "tests/fusion-rs/test_1.rs"

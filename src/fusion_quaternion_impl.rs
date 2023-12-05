@@ -1,7 +1,7 @@
 use core::ops;
 #[allow(unused_imports)]
 use libm::{asinf, atan2f, sqrtf};
-use crate::{Angle, asin_safe, Axis, Axis2, fusion_fast_inverse_sqrt, fusion_radians_to_degrees, FusionEuler, FusionMatrix, FusionQuaternion, FusionVector, Quaternion};
+use crate::{Angle, asin_safe, fusion_fast_inverse_sqrt, fusion_radians_to_degrees, FusionEuler, FusionMatrix, FusionQuaternion, FusionVector, Quaternion};
 
 impl FusionQuaternion {
     pub fn identity() -> Self {
@@ -58,23 +58,15 @@ impl FusionQuaternion {
             let qyqz = self.element.y * self.element.z;
             let qzqz = self.element.z * self.element.z;
             FusionMatrix {
-                element: Axis2 {
-                    x: Axis {
-                        x: 2.0f32 * (qwqw - 0.5f32 + qxqx),
-                        y: 2.0f32 * (qxqy - qwqz),
-                        z: 2.0f32 * (qxqz + qwqy),
-                    },
-                    y: Axis {
-                        x: 2.0f32 * (qxqy + qwqz),
-                        y: 2.0f32 * (qwqw - 0.5f32 + qyqy),
-                        z: 2.0f32 * (qyqz - qwqx),
-                    },
-                    z: Axis {
-                        x: 2.0f32 * (qxqz - qwqy),
-                        y: 2.0f32 * (qyqz + qwqx),
-                        z: 2.0f32 * (qwqw - 0.5f32 + qzqz),
-                    },
-                }
+                xx: 2.0f32 * (qwqw - 0.5f32 + qxqx),
+                xy: 2.0f32 * (qxqy - qwqz),
+                xz: 2.0f32 * (qxqz + qwqy),
+                yx: 2.0f32 * (qxqy + qwqz),
+                yy: 2.0f32 * (qwqw - 0.5f32 + qyqy),
+                yz: 2.0f32 * (qyqz - qwqx),
+                zx: 2.0f32 * (qxqz - qwqy),
+                zy: 2.0f32 * (qyqz + qwqx),
+                zz: 2.0f32 * (qwqw - 0.5f32 + qzqz),
             }
         }
     }
@@ -120,10 +112,10 @@ impl ops::Mul<FusionVector> for FusionQuaternion {
         unsafe {
             Self {
                 element: Quaternion {
-                    w: -self.element.x * rhs.axis.x - self.element.y * rhs.axis.y - self.element.z * rhs.axis.z,
-                    x: self.element.w * rhs.axis.x + self.element.y * rhs.axis.z - self.element.z * rhs.axis.y,
-                    y: self.element.w * rhs.axis.y - self.element.x * rhs.axis.z + self.element.z * rhs.axis.x,
-                    z: self.element.w * rhs.axis.z + self.element.x * rhs.axis.y - self.element.y * rhs.axis.x,
+                    w: -self.element.x * rhs.x - self.element.y * rhs.y - self.element.z * rhs.z,
+                    x: self.element.w * rhs.x + self.element.y * rhs.z - self.element.z * rhs.y,
+                    y: self.element.w * rhs.y - self.element.x * rhs.z + self.element.z * rhs.x,
+                    z: self.element.w * rhs.z + self.element.x * rhs.y - self.element.y * rhs.x,
                 }
             }
         }

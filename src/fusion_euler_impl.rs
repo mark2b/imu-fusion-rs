@@ -14,18 +14,12 @@ impl FusionEuler {
     }
 
     pub fn get_roll(&self) -> f32 {
-        unsafe {
-            self.angle.roll
-        }
+        self.angle.roll
     }
     pub fn get_pitch(&self) -> f32 {
-        unsafe {
-            self.angle.pitch
-        }
+        self.angle.pitch
     }
     pub fn get_yaw(&self) -> f32 {
-        unsafe {
-            self.angle.yaw
-        }
+        self.angle.yaw
     }
 }

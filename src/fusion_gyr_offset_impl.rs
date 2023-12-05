@@ -11,26 +11,23 @@ impl FusionGyrOffset {
         }
     }
 
-    pub fn update(&mut self, mut gyr: FusionVector) -> FusionVector{
-        unsafe {
+    pub fn update(&mut self, mut gyr: FusionVector) -> FusionVector {
+        // Subtract offset from gyroscope measurement
+        gyr = gyr - self.gyroscope_offset;
+        // Reset timer if gyroscope not stationary
 
-            // Subtract offset from gyroscope measurement
-            gyr = gyr - self.gyroscope_offset;
-            // Reset timer if gyroscope not stationary
-
-            if fabsf(gyr.axis.x) > THRESHOLD || fabsf(gyr.axis.y) > THRESHOLD || fabsf(gyr.axis.z) > THRESHOLD {
-                self.timer = 0;
-                return gyr;
-            }
-
-            // Increment timer while gyroscope stationary
-            if self.timer < self.timeout {
-                self.timer += 1;
-                return gyr;
-            }
-            // Adjust offset if timer has elapsed
-            self.gyroscope_offset = self.gyroscope_offset + (gyr * self.filter_coefficient);
-            gyr
+        if fabsf(gyr.x) > THRESHOLD || fabsf(gyr.y) > THRESHOLD || fabsf(gyr.z) > THRESHOLD {
+            self.timer = 0;
+            return gyr;
         }
+
+        // Increment timer while gyroscope stationary
+        if self.timer < self.timeout {
+            self.timer += 1;
+            return gyr;
+        }
+        // Adjust offset if timer has elapsed
+        self.gyroscope_offset = self.gyroscope_offset + (gyr * self.filter_coefficient);
+        gyr
     }
 }

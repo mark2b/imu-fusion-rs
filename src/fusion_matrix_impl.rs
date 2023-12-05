@@ -1,11 +1,34 @@
 use core::ops;
-use crate::{Axis, Axis2, FusionMatrix, FusionQuaternion, FusionVector};
+use crate::{FusionMatrix, FusionQuaternion, FusionVector};
 
 impl FusionMatrix {
+    pub fn new(xx: f32, xy: f32, xz: f32, yx: f32, yy: f32, yz: f32, zx: f32, zy: f32, zz: f32) -> Self {
+        Self {
+            xx,
+            xy,
+            xz,
+            yx,
+            yy,
+            yz,
+            zx,
+            zy,
+            zz,
+        }
+    }
+
+
     pub fn identity() -> Self {
         const VALUE: FusionMatrix =
             FusionMatrix {
-                data: [[1.0f32, 0.0f32, 0.0f32], [0.0f32, 1.0f32, 0.0f32], [0.0f32, 0.0f32, 1.0f32]],
+                xx: 1.0f32,
+                xy: 0.0f32,
+                xz: 0.0f32,
+                yx: 0.0f32,
+                yy: 1.0f32,
+                yz: 0.0f32,
+                zx: 0.0f32,
+                zy: 0.0f32,
+                zz: 1.0f32,
             };
         VALUE
     }
@@ -14,14 +37,10 @@ impl FusionMatrix {
 impl ops::Mul<FusionVector> for FusionMatrix {
     type Output = FusionVector;
     fn mul(self, rhs: FusionVector) -> Self::Output {
-        unsafe {
-            FusionVector {
-                axis: Axis {
-                    x: self.element.x.x * rhs.axis.x + self.element.x.y * rhs.axis.y + self.element.x.z * rhs.axis.z,
-                    y: self.element.y.x * rhs.axis.x + self.element.y.y * rhs.axis.y + self.element.y.z * rhs.axis.z,
-                    z: self.element.z.x * rhs.axis.x + self.element.z.y * rhs.axis.y + self.element.z.z * rhs.axis.z,
-                }
-            }
+        FusionVector {
+            x: self.xx * rhs.x + self.xy * rhs.y + self.xz * rhs.z,
+            y: self.yx * rhs.x + self.yy * rhs.y + self.yz * rhs.z,
+            z: self.zx * rhs.x + self.zy * rhs.y + self.zz * rhs.z,
         }
     }
 }
@@ -40,23 +59,15 @@ impl From<FusionQuaternion> for FusionMatrix {
             let qyqz = q.element.y * q.element.z;
             let qzqz = q.element.z * q.element.z;
             Self {
-                element: Axis2 {
-                    x: Axis {
-                        x: 2.0f32 * (qwqw - 0.5f32 + qxqx),
-                        y: 2.0f32 * (qxqy - qwqz),
-                        z: 2.0f32 * (qxqz + qwqy),
-                    },
-                    y: Axis {
-                        x: 2.0f32 * (qxqy + qwqz),
-                        y: 2.0f32 * (qwqw - 0.5f32 + qyqy),
-                        z: 2.0f32 * (qyqz - qwqx),
-                    },
-                    z: Axis {
-                        x: 2.0f32 * (qxqz - qwqy),
-                        y: 2.0f32 * (qyqz + qwqx),
-                        z: 2.0f32 * (qwqw - 0.5f32 + qzqz),
-                    },
-                }
+                xx: 2.0f32 * (qwqw - 0.5f32 + qxqx),
+                xy: 2.0f32 * (qxqy - qwqz),
+                xz: 2.0f32 * (qxqz + qwqy),
+                yx: 2.0f32 * (qxqy + qwqz),
+                yy: 2.0f32 * (qwqw - 0.5f32 + qyqy),
+                yz: 2.0f32 * (qyqz - qwqx),
+                zx: 2.0f32 * (qxqz - qwqy),
+                zy: 2.0f32 * (qyqz + qwqx),
+                zz: 2.0f32 * (qwqw - 0.5f32 + qzqz),
             }
         }
     }
