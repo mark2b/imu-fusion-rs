@@ -29,11 +29,11 @@ fn main() {
     let mut fusion = imu_fusion::Fusion::new(SAMPLE_RATE_HZ, ahrs_settings);
     let mut offset = FusionGyrOffset::new(SAMPLE_RATE_HZ);
 
-    // This loop should repeat each time new gyroscope data is available
-    let mut timestamp : f32; // replace this with actual gyroscope timestamp
-    let mut previous_timestamp = 0f32; // replace this with actual gyroscope timestamp
+    // This loop should repeat each time new sensors data is available
+    let mut timestamp : f32; // replace this with actual sensors timestamp
+    let mut previous_timestamp = 0f32;
     loop {
-        timestamp = std::time::SystemTime::now().duration_since(time::UNIX_EPOCH).unwrap().as_secs_f32();
+        timestamp = time::SystemTime::now().duration_since(time::UNIX_EPOCH).unwrap().as_secs_f32();
         // Acquire latest sensor data
         let gyr = imu_fusion::FusionVector::new(0.0f32, 0.0f32, 0.0f32); // replace this with actual gyroscope data in degrees/s
         let acc = imu_fusion::FusionVector::new(0.0f32, 0.0f32, 1.0f32); // replace this with actual accelerometer data in g
