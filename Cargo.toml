@@ -14,6 +14,10 @@ path = "examples/simple.rs"
 name = "advanced"
 path = "examples/advanced.rs"
 
+[[example]]
+name = "nalgebra"
+path = "examples/nalgebra.rs"
+
 [[test]]
 name = "test-1"
 path = "tests/fusion-rs/test_1.rs"
