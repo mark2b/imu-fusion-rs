@@ -1,0 +1,22 @@
+[package]
+name = "imu-fusion"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+fusion-use-normal-sqrt = []
+
+[[test]]
+name = "test-1"
+path = "tests/fusion-rs/test_1.rs"
+
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+libm = "0.2.8"
+nalgebra = { version = "0.31.4", default-features = false, features = ["libm-force"] }
+
+[dev-dependencies]
+csv = "1.3.0"

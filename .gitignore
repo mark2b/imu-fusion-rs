@@ -1,0 +1,7 @@
+.idea/
+/target
+/Cargo.lock
+/tests/fusion-c/CMakeFiles/
+/tests/fusion-c/build/
+/tests/fusion-c/.vscode/
+tests/fusion-c/Fusion/
