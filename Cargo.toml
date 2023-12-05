@@ -16,7 +16,7 @@ path = "src/lib.rs"
 
 [dependencies]
 libm = "0.2.8"
-nalgebra = { version = "0.31.4", default-features = false, features = ["libm-force"] }
+nalgebra = { version = "0.32.3", default-features = false, features = ["libm-force"] }
 
 [dev-dependencies]
 csv = "1.3.0"

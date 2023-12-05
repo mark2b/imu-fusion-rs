@@ -9,8 +9,6 @@ mod fusion_ahrs_impl;
 mod fusion_gyr_offset_impl;
 mod nalgebra;
 
-use libm::asinf;
-
 pub enum FusionConvention {
     /* North-West-Up */
     NWU,
@@ -113,8 +111,7 @@ pub union FusionQuaternion {
 
 #[derive(Copy, Clone)]
 #[allow(dead_code)]
-pub union FusionEuler {
-    data: [f32; 3],
+pub struct FusionEuler {
     pub angle: Angle,
 }
 
@@ -143,6 +140,7 @@ fn fusion_radians_to_degrees(radians: f32) -> f32 {
 }
 
 fn asin_safe(value: f32) -> f32 {
+    use libm::{asinf};
     if value <= -1.0f32 {
         return core::f32::consts::PI / -2.0f32;
     }
@@ -168,6 +166,9 @@ fn fusion_fast_inverse_sqrt(x: f32) -> f32 {
 
 #[test]
 fn fusion_fast_inverse_sqrt_test() {
+    use libm::{fabsf};
     let result = fusion_fast_inverse_sqrt(9.0f32);
-    assert_eq!(1f32 / result, 3f32);
+    let actual = 1f32 / result;
+    let expected = 3f32;
+    assert!(fabsf(actual - expected) < 0.01f32);
 }
