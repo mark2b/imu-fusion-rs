@@ -1,0 +1,3 @@
+[submodule "fusion-c"]
+	path = fusion-c
+	url = https://github.com/xioTechnologies/Fusion.git
