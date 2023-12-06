@@ -9,8 +9,6 @@ repository = "https://github.com/mark2b/imu-fusion-rs"
 license-file = "LICENSE"
 keywords = ["imu", "fusion", "accelerometer", "gyroscope", "magnetometer"]
 exclude = ["/tests", "/fusion-c"]
-include = ["/src", "/examples"]
-
 
 [features]
 fusion-use-normal-sqrt = []
