@@ -1,5 +1,5 @@
 use libm::{atan2f, cosf, fabsf, sinf};
-use crate::{fusion_degrees_to_radians, FusionAhrs, FusionAhrsSettings, FusionConvention, FusionQuaternion, FusionVector, Quaternion};
+use crate::{fusion_degrees_to_radians, FusionAhrs, FusionAhrsSettings, FusionConvention, FusionQuaternion, FusionVector};
 use crate::FusionConvention::NWU;
 
 /**
@@ -73,21 +73,19 @@ impl FusionAhrs {
     }
 
     pub fn update_external_heading(&mut self, gyr: FusionVector, acc: FusionVector, heading: f32, dt: f32) {
-        unsafe {
-            let q = self.quaternion.element;
-            // Calculate roll
-            let roll = atan2f(q.w * q.x + q.y * q.z, 0.5f32 - q.y * q.y - q.x * q.x);
-            // Calculate magnetometer// Calculate magnetometer
-            let heading_radians = fusion_degrees_to_radians(heading);
-            let sin_heading_radians = sinf(heading_radians);
-            let magnetometer = FusionVector {
-                x: cosf(heading_radians),
-                y: -1.0f32 * cosf(roll) * sin_heading_radians,
-                z: sin_heading_radians * sinf(roll),
-            };
-            // Update AHRS algorithm
-            self.update(gyr, acc, magnetometer, dt);
-        }
+        let q = self.quaternion;
+        // Calculate roll
+        let roll = atan2f(q.w * q.x + q.y * q.z, 0.5f32 - q.y * q.y - q.x * q.x);
+        // Calculate magnetometer// Calculate magnetometer
+        let heading_radians = fusion_degrees_to_radians(heading);
+        let sin_heading_radians = sinf(heading_radians);
+        let magnetometer = FusionVector {
+            x: cosf(heading_radians),
+            y: -1.0f32 * cosf(roll) * sin_heading_radians,
+            z: sin_heading_radians * sinf(roll),
+        };
+        // Update AHRS algorithm
+        self.update(gyr, acc, magnetometer, dt);
     }
 
     pub fn update(&mut self, gyr: FusionVector, acc: FusionVector, mag: FusionVector, dt: f32) {
@@ -188,20 +186,16 @@ impl FusionAhrs {
     }
 
     fn set_heading(&mut self, heading: f32) {
-        unsafe {
-            let q = self.quaternion.element;
-            let yaw = atan2f(q.w * q.z + q.x * q.y, 0.5f32 - q.y * q.y - q.z * q.z);
-            let half_yaw_minus_heading = 0.5f32 * (yaw - fusion_degrees_to_radians(heading));
-            let rotation = FusionQuaternion {
-                element: Quaternion {
-                    w: cosf(half_yaw_minus_heading),
-                    x: 0.0f32,
-                    y: 0.0f32,
-                    z: -1.0f32 * sinf(half_yaw_minus_heading),
-                }
-            };
-            self.quaternion = self.quaternion * rotation;
-        }
+        let q = self.quaternion;
+        let yaw = atan2f(q.w * q.z + q.x * q.y, 0.5f32 - q.y * q.y - q.z * q.z);
+        let half_yaw_minus_heading = 0.5f32 * (yaw - fusion_degrees_to_radians(heading));
+        let rotation = FusionQuaternion {
+            w: cosf(half_yaw_minus_heading),
+            x: 0.0f32,
+            y: 0.0f32,
+            z: -1.0f32 * sinf(half_yaw_minus_heading),
+        };
+        self.quaternion = self.quaternion * rotation;
     }
 
     pub fn reset(&mut self) {
@@ -221,108 +215,100 @@ impl FusionAhrs {
     }
 
     pub fn calculate_half_gravity(&self) -> FusionVector {
-        unsafe {
-            let q = self.quaternion.element;
-            match self.settings.convention {
-                FusionConvention::ENU | FusionConvention::NWU => {
-                    FusionVector {
-                        x: q.x * q.z - q.w * q.y,
-                        y: q.y * q.z + q.w * q.x,
-                        z: q.w * q.w - 0.5f32 + q.z * q.z,
-                    }
+        let q = self.quaternion;
+        match self.settings.convention {
+            FusionConvention::ENU | FusionConvention::NWU => {
+                FusionVector {
+                    x: q.x * q.z - q.w * q.y,
+                    y: q.y * q.z + q.w * q.x,
+                    z: q.w * q.w - 0.5f32 + q.z * q.z,
                 }
-                FusionConvention::NED => {
-                    FusionVector {
-                        x: q.w * q.y - q.x * q.z,
-                        y: -1.0f32 * (q.y * q.z + q.w * q.x),
-                        z: 0.5f32 - q.w * q.w - q.z * q.z,
-                    }
+            }
+            FusionConvention::NED => {
+                FusionVector {
+                    x: q.w * q.y - q.x * q.z,
+                    y: -1.0f32 * (q.y * q.z + q.w * q.x),
+                    z: 0.5f32 - q.w * q.w - q.z * q.z,
                 }
             }
         }
     }
 
     pub fn calculate_half_magnetic(&self) -> FusionVector {
-        unsafe {
-            let q = self.quaternion.element;
-            match self.settings.convention {
-                FusionConvention::NWU => {
-                    let half_magnetic = FusionVector {
-                        x: q.x * q.y + q.w * q.z,
-                        y: q.w * q.w - 0.5f32 + q.y * q.y,
-                        z: q.y * q.z - q.w * q.x,
-                    };
-                    half_magnetic
-                }
-                FusionConvention::ENU => {
-                    let half_magnetic = FusionVector {
-                        x: 0.5f32 - q.w * q.w - q.x * q.x,
-                        y: q.w * q.z - q.x * q.y,
-                        z: -1.0f32 * (q.x * q.z + q.w * q.y),
-                    };
-                    half_magnetic
-                }
-                FusionConvention::NED => {
-                    let half_magnetic = FusionVector {
-                        x: -1.0f32 * (q.x * q.y + q.w * q.z),
-                        y: 0.5f32 - q.w * q.w - q.y * q.y,
-                        z: q.w * q.x - q.y * q.z,
-                    };
-                    half_magnetic
-                }
+        let q = self.quaternion;
+        match self.settings.convention {
+            FusionConvention::NWU => {
+                let half_magnetic = FusionVector {
+                    x: q.x * q.y + q.w * q.z,
+                    y: q.w * q.w - 0.5f32 + q.y * q.y,
+                    z: q.y * q.z - q.w * q.x,
+                };
+                half_magnetic
+            }
+            FusionConvention::ENU => {
+                let half_magnetic = FusionVector {
+                    x: 0.5f32 - q.w * q.w - q.x * q.x,
+                    y: q.w * q.z - q.x * q.y,
+                    z: -1.0f32 * (q.x * q.z + q.w * q.y),
+                };
+                half_magnetic
+            }
+            FusionConvention::NED => {
+                let half_magnetic = FusionVector {
+                    x: -1.0f32 * (q.x * q.y + q.w * q.z),
+                    y: 0.5f32 - q.w * q.w - q.y * q.y,
+                    z: q.w * q.x - q.y * q.z,
+                };
+                half_magnetic
             }
         }
     }
     pub fn earth_acc(&self) -> FusionVector {
-        unsafe {
-            // Calculate accelerometer measurement in the Earth coordinate frame
-            let q = self.quaternion.element;
-            let a = self.acc;
-            let qwqw = q.w * q.w; // calculate common terms to avoid repeated operations
-            let qwqx = q.w * q.x;
-            let qwqy = q.w * q.y;
-            let qwqz = q.w * q.z;
-            let qxqy = q.x * q.y;
-            let qxqz = q.x * q.z;
-            let qyqz = q.y * q.z;
-            let mut accelerometer = FusionVector {
-                x: 2.0f32 * ((qwqw - 0.5f32 + q.x * q.x) * a.x + (qxqy - qwqz) * a.y + (qxqz + qwqy) * a.z),
-                y: 2.0f32 * ((qxqy + qwqz) * a.x + (qwqw - 0.5f32 + q.y * q.y) * a.y + (qyqz - qwqx) * a.z),
-                z: 2.0f32 * ((qxqz - qwqy) * a.x + (qyqz + qwqx) * a.y + (qwqw - 0.5f32 + q.z * q.z) * a.z),
-            };
-            // Remove gravity from accelerometer measurement
-            match self.settings.convention {
-                FusionConvention::ENU | FusionConvention::NWU => {
-                    accelerometer.z -= 1.0f32;
-                    accelerometer
-                }
-                FusionConvention::NED => {
-                    accelerometer.z += 1.0f32;
-                    accelerometer
-                }
+        // Calculate accelerometer measurement in the Earth coordinate frame
+        let q = self.quaternion;
+        let a = self.acc;
+        let qwqw = q.w * q.w; // calculate common terms to avoid repeated operations
+        let qwqx = q.w * q.x;
+        let qwqy = q.w * q.y;
+        let qwqz = q.w * q.z;
+        let qxqy = q.x * q.y;
+        let qxqz = q.x * q.z;
+        let qyqz = q.y * q.z;
+        let mut accelerometer = FusionVector {
+            x: 2.0f32 * ((qwqw - 0.5f32 + q.x * q.x) * a.x + (qxqy - qwqz) * a.y + (qxqz + qwqy) * a.z),
+            y: 2.0f32 * ((qxqy + qwqz) * a.x + (qwqw - 0.5f32 + q.y * q.y) * a.y + (qyqz - qwqx) * a.z),
+            z: 2.0f32 * ((qxqz - qwqy) * a.x + (qyqz + qwqx) * a.y + (qwqw - 0.5f32 + q.z * q.z) * a.z),
+        };
+        // Remove gravity from accelerometer measurement
+        match self.settings.convention {
+            FusionConvention::ENU | FusionConvention::NWU => {
+                accelerometer.z -= 1.0f32;
+                accelerometer
+            }
+            FusionConvention::NED => {
+                accelerometer.z += 1.0f32;
+                accelerometer
             }
         }
     }
 
     pub fn linear_acc(&self) -> FusionVector {
-        unsafe {
-            // Calculate accelerometer measurement in the Earth coordinate frame
-            let q = self.quaternion.element;
-            // Calculate gravity in the sensor coordinate frame
-            let gravity = FusionVector {
-                x: 2.0f32 * (q.x * q.z - q.w * q.y),
-                y: 2.0f32 * (q.y * q.z + q.w * q.x),
-                z: 2.0f32 * (q.w * q.w - 0.5f32 + q.z * q.z),
-            };
+        // Calculate accelerometer measurement in the Earth coordinate frame
+        let q = self.quaternion;
+        // Calculate gravity in the sensor coordinate frame
+        let gravity = FusionVector {
+            x: 2.0f32 * (q.x * q.z - q.w * q.y),
+            y: 2.0f32 * (q.y * q.z + q.w * q.x),
+            z: 2.0f32 * (q.w * q.w - 0.5f32 + q.z * q.z),
+        };
 
-            // Remove gravity from accelerometer measurement
-            match self.settings.convention {
-                FusionConvention::ENU | FusionConvention::NWU => {
-                    self.acc - gravity
-                }
-                FusionConvention::NED => {
-                    self.acc + gravity
-                }
+        // Remove gravity from accelerometer measurement
+        match self.settings.convention {
+            FusionConvention::ENU | FusionConvention::NWU => {
+                self.acc - gravity
+            }
+            FusionConvention::NED => {
+                self.acc + gravity
             }
         }
     }

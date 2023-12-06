@@ -14,7 +14,7 @@ pub enum FusionConvention {
     NWU,
     /* East-North-Up */
     ENU,
-    /* East-North-Up */
+    /* North-East-Down */
     NED,
 }
 
@@ -60,14 +60,6 @@ pub struct FusionAhrsSettings {
 }
 
 #[derive(Copy, Clone)]
-pub struct Quaternion {
-    pub w: f32,
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-}
-
-#[derive(Copy, Clone)]
 pub struct Angle {
     pub roll: f32,
     pub pitch: f32,
@@ -83,7 +75,6 @@ pub struct FusionVector {
 }
 
 #[derive(Copy, Clone)]
-#[allow(dead_code)]
 pub struct FusionMatrix {
     pub xx: f32,
     pub xy: f32,
@@ -97,10 +88,11 @@ pub struct FusionMatrix {
 }
 
 #[derive(Copy, Clone)]
-#[allow(dead_code)]
-pub union FusionQuaternion {
-    pub data: [f32; 4],
-    pub element: Quaternion,
+pub struct FusionQuaternion {
+    pub w: f32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 #[derive(Copy, Clone)]

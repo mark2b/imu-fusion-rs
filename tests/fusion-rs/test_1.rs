@@ -28,19 +28,18 @@ mod tests {
             let euler = fusion.euler();
             let earth_acc = fusion.earth_acc();
             earth_acc.get(&mut acc_x, &mut acc_y, &mut acc_z);
-            unsafe {
-                writer.write_record(&[format!("{:.8}", dt), format!("{:.8}", euler.angle.yaw), format!("{:.8}", euler.angle.pitch), format!("{:.8}", euler.angle.roll), format!("{:.8}", acc_x), format!("{:.8}", acc_y), format!("{:.8}", acc_z), format!("{:.8}", q.data[0]), format!("{:.8}", q.data[1]), format!("{:.8}", q.data[2]), format!("{:.8}", q.data[3])]).unwrap();
-            }
+            writer.write_record(&[format!("{:.8}", dt), format!("{:.8}", euler.angle.yaw), format!("{:.8}", euler.angle.pitch), format!("{:.8}", euler.angle.roll), format!("{:.8}", acc_x), format!("{:.8}", acc_y), format!("{:.8}", acc_z), format!("{:.8}", q.w), format!("{:.8}", q.x), format!("{:.8}", q.y), format!("{:.8}", q.z)]).unwrap();
         }
         _ = writer.flush();
         compare_results();
     }
+
     fn compare_results() {
         let mut reader_c = csv::Reader::from_path("tests/fusion_c_out.csv").unwrap();
         let mut reader_rs = csv::Reader::from_path("tests/fusion_rs_out.csv").unwrap();
         loop {
-            let record_c = reader_c.deserialize::<[f32;3]>().next();
-            let record_rs = reader_rs.deserialize::<[f32;3]>().next();
+            let record_c = reader_c.deserialize::<[f32; 3]>().next();
+            let record_rs = reader_rs.deserialize::<[f32; 3]>().next();
             match record_c {
                 Some(Ok(record_c)) => {
                     match record_rs {

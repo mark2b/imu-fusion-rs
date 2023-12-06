@@ -2,6 +2,15 @@
 name = "imu-fusion"
 version = "0.1.0"
 edition = "2021"
+authors = ["Mark Berner <mark@berner.dev>"]
+description = "A Rust library for fusing IMU data. Based on https://github.com/xioTechnologies/Fusion"
+readme = "README.md"
+repository = "https://github.com/mark2b/imu-fusion-rs"
+license-file = "LICENSE"
+keywords = ["imu", "fusion", "accelerometer", "gyroscope", "magnetometer"]
+exclude = ["/tests", "/fusion-c"]
+include = ["/src", "/examples"]
+
 
 [features]
 fusion-use-normal-sqrt = []

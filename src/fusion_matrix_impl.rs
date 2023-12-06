@@ -47,28 +47,26 @@ impl ops::Mul<FusionVector> for FusionMatrix {
 
 impl From<FusionQuaternion> for FusionMatrix {
     fn from(q: FusionQuaternion) -> Self {
-        unsafe {
-            let qwqw = q.element.w * q.element.w;
-            let qwqx = q.element.w * q.element.x;
-            let qwqy = q.element.w * q.element.y;
-            let qwqz = q.element.w * q.element.z;
-            let qxqx = q.element.x * q.element.x;
-            let qxqy = q.element.x * q.element.y;
-            let qxqz = q.element.x * q.element.z;
-            let qyqy = q.element.y * q.element.y;
-            let qyqz = q.element.y * q.element.z;
-            let qzqz = q.element.z * q.element.z;
-            Self {
-                xx: 2.0f32 * (qwqw - 0.5f32 + qxqx),
-                xy: 2.0f32 * (qxqy - qwqz),
-                xz: 2.0f32 * (qxqz + qwqy),
-                yx: 2.0f32 * (qxqy + qwqz),
-                yy: 2.0f32 * (qwqw - 0.5f32 + qyqy),
-                yz: 2.0f32 * (qyqz - qwqx),
-                zx: 2.0f32 * (qxqz - qwqy),
-                zy: 2.0f32 * (qyqz + qwqx),
-                zz: 2.0f32 * (qwqw - 0.5f32 + qzqz),
-            }
+        let qwqw = q.w * q.w;
+        let qwqx = q.w * q.x;
+        let qwqy = q.w * q.y;
+        let qwqz = q.w * q.z;
+        let qxqx = q.x * q.x;
+        let qxqy = q.x * q.y;
+        let qxqz = q.x * q.z;
+        let qyqy = q.y * q.y;
+        let qyqz = q.y * q.z;
+        let qzqz = q.z * q.z;
+        Self {
+            xx: 2.0f32 * (qwqw - 0.5f32 + qxqx),
+            xy: 2.0f32 * (qxqy - qwqz),
+            xz: 2.0f32 * (qxqz + qwqy),
+            yx: 2.0f32 * (qxqy + qwqz),
+            yy: 2.0f32 * (qwqw - 0.5f32 + qyqy),
+            yz: 2.0f32 * (qyqz - qwqx),
+            zx: 2.0f32 * (qxqz - qwqy),
+            zy: 2.0f32 * (qyqz + qwqx),
+            zz: 2.0f32 * (qwqw - 0.5f32 + qzqz),
         }
     }
 }
