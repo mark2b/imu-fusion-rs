@@ -159,7 +159,7 @@ impl FusionAhrs {
             } else {
                 self.magnetic_recovery_timeout = self.settings.recovery_trigger_period;
             }
-            self.magnetic_recovery_trigger = clamp(self.magnetic_recovery_trigger, self.settings.recovery_trigger_period, 0);
+            self.magnetic_recovery_trigger = clamp(self.magnetic_recovery_trigger, 0, self.settings.recovery_trigger_period);
             // Apply magnetometer feedback
             if !self.magnetometer_ignored {
                 half_magnetometer_feedback = self.half_magnetometer_feedback;
