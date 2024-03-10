@@ -29,7 +29,7 @@ pub struct Fusion {
     pub(crate) hard_iron_offset: FusionVector,
     pub(crate) ahrs: FusionAhrs,
     pub(crate) offset: FusionGyrOffset,
-    pub(crate) last_time_stamp: f32,
+    pub(crate) last_timestamp: f32,
 }
 
 pub struct FusionAhrs {

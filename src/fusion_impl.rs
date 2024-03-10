@@ -15,7 +15,7 @@ impl Fusion {
             hard_iron_offset: FusionVector::zero(),
             ahrs,
             offset: FusionGyrOffset::new(sample_rate),
-            last_time_stamp: 0f32,
+            last_timestamp: 0f32,
         }
     }
 
@@ -50,8 +50,8 @@ impl Fusion {
     /// }
     ///
     /// ```
-    pub fn update_no_mag(&mut self, gyr: FusionVector, acc: FusionVector, time_stamp: f32) {
-        let delta_t = time_stamp - self.last_time_stamp;
+    pub fn update_no_mag(&mut self, gyr: FusionVector, acc: FusionVector, timestamp: f32) {
+        let delta_t = timestamp - self.last_timestamp;
         // Apply calibration
         let mut gyr = self.inertial_calibration(gyr, self.gyr_misalignment, self.gyr_sensitivity, self.gyr_offset);
         let acc = self.inertial_calibration(acc, self.acc_misalignment, self.acc_sensitivity, self.acc_offset);
@@ -60,7 +60,7 @@ impl Fusion {
         gyr = self.offset.update(gyr);
 
         self.ahrs.update_no_mag(gyr, acc, delta_t);
-        self.last_time_stamp = time_stamp;
+        self.last_timestamp = timestamp;
     }
 
     /// Updates the AHRS algorithm based on gyroscope data in degrees/s, acceleration data in g force and a heading in degrees.
@@ -92,9 +92,9 @@ impl Fusion {
         gyr: FusionVector,
         acc: FusionVector,
         heading: f32,
-        time_stamp: f32,
+        timestamp: f32,
     ) {
-        let delta_t = time_stamp - self.last_time_stamp;
+        let delta_t = timestamp - self.last_timestamp;
 
         // Apply calibration
         let mut gyr = self.inertial_calibration(gyr, self.gyr_misalignment, self.gyr_sensitivity, self.gyr_offset);
@@ -104,7 +104,7 @@ impl Fusion {
         gyr = self.offset.update(gyr);
 
         self.ahrs.update_external_heading(gyr, acc, heading, delta_t);
-        self.last_time_stamp = time_stamp;
+        self.last_timestamp = timestamp;
     }
 
     /// Updates the AHRS algorithm based on gyroscope data in degrees/s, acceleration data in g force and magnetic measurements in degrees.
@@ -136,9 +136,9 @@ impl Fusion {
         gyr: FusionVector,
         acc: FusionVector,
         mag: FusionVector,
-        time_stamp: f32,
+        timestamp: f32,
     ) {
-        let delta_t = time_stamp - self.last_time_stamp;
+        let delta_t = timestamp - self.last_timestamp;
         // Apply calibration
         let mut gyr = self.inertial_calibration(gyr, self.gyr_misalignment, self.gyr_sensitivity, self.gyr_offset);
         let acc = self.inertial_calibration(acc, self.acc_misalignment, self.acc_sensitivity, self.acc_offset);
@@ -148,7 +148,7 @@ impl Fusion {
         gyr = self.offset.update(gyr);
 
         self.ahrs.update(gyr, acc, mag, delta_t);
-        self.last_time_stamp = time_stamp;
+        self.last_timestamp = timestamp;
     }
 
     /// Obtain euler angle current sensor position
