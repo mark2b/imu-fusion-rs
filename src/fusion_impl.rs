@@ -28,8 +28,8 @@ impl Fusion {
     }
 
     /// Updates the AHRS algorithm based on gyroscope data in degrees/s and acceleration data in g force.
-    /// 
-    /// The time is provided using an absolute timestamp in seconds since the last measurement. 
+    ///
+    /// The time is provided using an absolute timestamp in seconds since the last measurement.
     /// Note that if you provide unix timestamps, the precision of f32 will not be enough to correctly compute the time difference.
     ///
     /// # Examples
@@ -41,14 +41,14 @@ impl Fusion {
     /// let ahrs_settings = FusionAhrsSettings::new();
     /// let mut fusion = imu_fusion::Fusion::new(SAMPLE_RATE_HZ, ahrs_settings);
     /// let mut current_ts = 0f32;
-    /// 
+    ///
     /// loop {
     ///     let gyr = FusionVector::new(0f32, 0f32, 0f32); // replace this with actual gyroscope data in degrees/s
     ///     let acc = FusionVector::new(0f32, 0f32, 1.0f32); // replace this with actual accelerometer data in g
     ///     fusion.update_no_mag(gyr, acc, current_ts);
     ///     current_ts += 1.0 / SAMPLE_RATE_HZ as f32
     /// }
-    /// 
+    ///
     /// ```
     pub fn update_no_mag(&mut self, gyr: FusionVector, acc: FusionVector, time_stamp: f32) {
         let delta_t = time_stamp - self.last_time_stamp;
@@ -64,8 +64,8 @@ impl Fusion {
     }
 
     /// Updates the AHRS algorithm based on gyroscope data in degrees/s, acceleration data in g force and a heading in degrees.
-    /// 
-    /// The time is provided using an absolute timestamp in seconds since the last measurement. 
+    ///
+    /// The time is provided using an absolute timestamp in seconds since the last measurement.
     /// Note that if you provide unix timestamps, the precision of f32 will not be enough to correctly compute the time difference.
     ///
     /// # Examples
@@ -77,7 +77,7 @@ impl Fusion {
     /// let ahrs_settings = FusionAhrsSettings::new();
     /// let mut fusion = Fusion::new(SAMPLE_RATE_HZ, ahrs_settings);
     /// let mut current_ts = 0f32;
-    /// 
+    ///
     /// loop {
     ///     let gyr = FusionVector::new(0f32, 0f32, 0f32); // replace this with actual gyroscope data in degrees/s
     ///     let acc = FusionVector::new(0f32, 0f32, 1.0f32); // replace this with actual accelerometer data in g
@@ -85,7 +85,7 @@ impl Fusion {
     ///     fusion.update_external_heading(gyr, acc, external_heading, current_ts);
     ///     current_ts += 1.0 / SAMPLE_RATE_HZ as f32
     /// }
-    /// 
+    ///
     /// ```
     pub fn update_external_heading(
         &mut self,
@@ -108,8 +108,8 @@ impl Fusion {
     }
 
     /// Updates the AHRS algorithm based on gyroscope data in degrees/s, acceleration data in g force and magnetic measurements in degrees.
-    /// 
-    /// The time is provided using an absolute timestamp in seconds since the last measurement. 
+    ///
+    /// The time is provided using an absolute timestamp in seconds since the last measurement.
     /// Note that if you provide unix timestamps, the precision of f32 will not be enough to correctly compute the time difference.
     ///
     /// # Examples
@@ -121,7 +121,7 @@ impl Fusion {
     /// let ahrs_settings = FusionAhrsSettings::new();
     /// let mut fusion = Fusion::new(SAMPLE_RATE_HZ, ahrs_settings);
     /// let mut current_ts = 0f32;
-    /// 
+    ///
     /// loop {
     ///     let gyr = FusionVector::new(0f32, 0f32, 0f32); // replace this with actual gyroscope data in degrees/s
     ///     let acc = FusionVector::new(0f32, 0f32, 1.0f32); // replace this with actual accelerometer data in g
@@ -129,7 +129,7 @@ impl Fusion {
     ///     fusion.update(gyr, acc, mag, current_ts);
     ///     current_ts += 1.0 / SAMPLE_RATE_HZ as f32
     /// }
-    /// 
+    ///
     /// ```
     pub fn update(
         &mut self,
@@ -151,10 +151,48 @@ impl Fusion {
         self.last_time_stamp = time_stamp;
     }
 
+    /// Obtain euler angle current sensor position
+    ///
+    /// Euler angles are provided in degrees
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use imu_fusion::{Fusion, FusionAhrsSettings};
+    ///
+    /// const SAMPLE_RATE_HZ: u32 = 100;
+    ///
+    /// let ahrs_settings = FusionAhrsSettings::new();
+    /// let mut fusion = Fusion::new(SAMPLE_RATE_HZ, ahrs_settings);
+    ///
+    /// // ...update sensor values
+    ///
+    /// let euler = fusion.euler();
+    /// println!("Roll {}, Pitch {}, Yaw {}", euler.angle.roll, euler.angle.pitch, euler.angle.yaw);
+    /// ```
     pub fn euler(&self) -> FusionEuler {
         self.ahrs.quaternion.euler()
     }
 
+    /// Obtain acceleration of sensor in earth's frame of reference
+    ///
+    /// The values returned are provided in g force
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use imu_fusion::{Fusion, FusionAhrsSettings, FusionVector};
+    ///
+    /// const SAMPLE_RATE_HZ: u32 = 100;
+    ///
+    /// let ahrs_settings = FusionAhrsSettings::new();
+    /// let mut fusion = Fusion::new(SAMPLE_RATE_HZ, ahrs_settings);
+    ///
+    /// // ...update sensor values
+    ///
+    /// let acc = fusion.earth_acc();
+    /// println!("x {}, y {}, z {}", acc.x, acc.y, acc.z);
+    /// ```
     pub fn earth_acc(&self) -> FusionVector {
         self.ahrs.earth_acc()
     }
