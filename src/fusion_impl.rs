@@ -59,9 +59,10 @@ impl Fusion {
     /// Updates the AHRS algorithm based on gyroscope data in degrees/s and acceleration data in g force.
     ///
     /// The time is provided as a duration in seconds since the last measurement.
+    /// Note that this won't increase the internal timestamp and using the timestamp version of update functions will produce incorrect results.
     ///
     /// # Examples
-    /// ```
+    /// ```no_run
     /// use imu_fusion::{Fusion, FusionVector, FusionAhrsSettings};
     /// use std::time::{Duration, Instant};
     ///
@@ -129,12 +130,13 @@ impl Fusion {
     /// Updates the AHRS algorithm based on gyroscope data in degrees/s, acceleration data in g force and a heading in degrees.
     ///
     /// The time is provided using a duration in seconds since the last measurement.
+    /// Note that this won't increase the internal timestamp and using the timestamp version of update functions will produce incorrect results.
     ///
     /// # Examples
     /// ```no_run
     /// use imu_fusion::{Fusion, FusionVector, FusionAhrsSettings};
     /// use std::time::{Duration, Instant};
-    /// 
+    ///
     /// const SAMPLE_RATE_HZ: u32 = 100;
     ///
     /// let ahrs_settings = FusionAhrsSettings::new();
@@ -206,7 +208,7 @@ impl Fusion {
     /// Updates the AHRS algorithm based on gyroscope data in degrees/s, acceleration data in g force and magnetic measurements in degrees.
     ///
     /// The time is provided using a duration in seconds since the last measurement.
-    ///
+    /// Note that this won't increase the internal timestamp and using the timestamp version of update functions will produce incorrect results.
     /// # Examples
     /// ```no_run
     /// use imu_fusion::{Fusion, FusionAhrsSettings, FusionVector};
