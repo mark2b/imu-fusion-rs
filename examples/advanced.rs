@@ -30,10 +30,8 @@ fn main() {
     let mut offset = FusionGyrOffset::new(SAMPLE_RATE_HZ);
 
     // This loop should repeat each time new sensors data is available
-    let mut timestamp : f32; // replace this with actual sensors timestamp
-    let mut previous_timestamp = 0f32;
+    let start_time = time::Instant::now();
     loop {
-        timestamp = time::SystemTime::now().duration_since(time::UNIX_EPOCH).unwrap().as_secs_f32();
         // Acquire latest sensor data
         let gyr = imu_fusion::FusionVector::new(0.0f32, 0.0f32, 0.0f32); // replace this with actual gyroscope data in degrees/s
         let acc = imu_fusion::FusionVector::new(0.0f32, 0.0f32, 1.0f32); // replace this with actual accelerometer data in g
@@ -47,16 +45,11 @@ fn main() {
         // Update gyroscope offset correction algorithm
         gyr = offset.update(gyr);
 
-        // Calculate delta time (in seconds) to account for gyroscope sample clock error
-        let delta_t = (timestamp - previous_timestamp) / SAMPLE_RATE_HZ as f32;
-        if previous_timestamp == 0f32 {
-            previous_timestamp = timestamp;
-            continue;
-        }
-        previous_timestamp = timestamp;
+        // obtain a timestamp since the start of measurements as f32 in seconds
+        let timestamp = start_time.elapsed().as_secs_f32();
 
         // Update gyroscope AHRS algorithm
-        fusion.update(gyr, acc, mag, delta_t);
+        fusion.update(gyr, acc, mag, timestamp);
 
         // Print algorithm outputs
         let euler = fusion.euler();
