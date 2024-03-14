@@ -19,35 +19,35 @@ pub enum FusionConvention {
 }
 
 pub struct Fusion {
-    pub(crate) gyr_misalignment: FusionMatrix,
-    pub(crate) gyr_sensitivity: FusionVector,
-    pub(crate) gyr_offset: FusionVector,
-    pub(crate) acc_misalignment: FusionMatrix,
-    pub(crate) acc_sensitivity: FusionVector,
-    pub(crate) acc_offset: FusionVector,
-    pub(crate) soft_iron_matrix: FusionMatrix,
-    pub(crate) hard_iron_offset: FusionVector,
-    pub(crate) ahrs: FusionAhrs,
-    pub(crate) offset: FusionGyrOffset,
-    pub(crate) last_timestamp: f32,
+    pub gyr_misalignment: FusionMatrix,
+    pub gyr_sensitivity: FusionVector,
+    pub gyr_offset: FusionVector,
+    pub acc_misalignment: FusionMatrix,
+    pub acc_sensitivity: FusionVector,
+    pub acc_offset: FusionVector,
+    pub soft_iron_matrix: FusionMatrix,
+    pub hard_iron_offset: FusionVector,
+    pub ahrs: FusionAhrs,
+    pub offset: FusionGyrOffset,
+    pub last_timestamp: f32,
 }
 
 pub struct FusionAhrs {
-    settings: FusionAhrsSettings,
-    quaternion: FusionQuaternion,
-    acc: FusionVector,
-    initialising: bool,
-    ramped_gain: f32,
-    ramped_gain_step: f32,
-    angular_rate_recovery: bool,
-    half_accelerometer_feedback: FusionVector,
-    half_magnetometer_feedback: FusionVector,
-    accelerometer_ignored: bool,
-    acceleration_recovery_trigger: i32,
-    acceleration_recovery_timeout: i32,
-    magnetometer_ignored: bool,
-    magnetic_recovery_trigger: i32,
-    magnetic_recovery_timeout: i32,
+    pub settings: FusionAhrsSettings,
+    pub quaternion: FusionQuaternion,
+    pub acc: FusionVector,
+    pub initialising: bool,
+    pub ramped_gain: f32,
+    pub ramped_gain_step: f32,
+    pub angular_rate_recovery: bool,
+    pub half_accelerometer_feedback: FusionVector,
+    pub half_magnetometer_feedback: FusionVector,
+    pub accelerometer_ignored: bool,
+    pub acceleration_recovery_trigger: i32,
+    pub acceleration_recovery_timeout: i32,
+    pub magnetometer_ignored: bool,
+    pub magnetic_recovery_trigger: i32,
+    pub magnetic_recovery_timeout: i32,
 }
 
 pub struct FusionAhrsSettings {
@@ -102,10 +102,10 @@ pub struct FusionEuler {
 }
 
 pub struct FusionGyrOffset {
-    filter_coefficient: f32,
-    timeout: u32,
-    timer: u32,
-    gyroscope_offset: FusionVector,
+    pub filter_coefficient: f32,
+    pub timeout: u32,
+    pub timer: u32,
+    pub gyroscope_offset: FusionVector,
 }
 
 // Timeout in seconds.
