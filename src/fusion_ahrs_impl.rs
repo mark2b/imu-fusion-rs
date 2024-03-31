@@ -42,7 +42,7 @@ impl FusionAhrs {
         self.settings.acc_rejection = if settings.acc_rejection == 0.0f32 {
             f32::MAX
         } else {
-            let v = 0.5f32 * sinf(fusion_degrees_to_radians(fusion_degrees_to_radians(settings.acc_rejection)));
+            let v = 0.5f32 * sinf(fusion_degrees_to_radians(settings.acc_rejection));
             v * v
         };
         self.settings.mag_rejection = if settings.mag_rejection == 0.0f32 {
