@@ -1,5 +1,5 @@
 use libm::{atan2f, cosf, fabsf, sinf};
-use crate::{fusion_degrees_to_radians, FusionAhrs, FusionAhrsSettings, FusionConvention, FusionQuaternion, FusionVector};
+use crate::{fusion_degrees_to_radians, FusionAhrs, FusionAhrsFlags, FusionAhrsSettings, FusionConvention, FusionQuaternion, FusionVector};
 use crate::FusionConvention::NWU;
 
 /**
@@ -310,6 +310,16 @@ impl FusionAhrs {
             FusionConvention::NED => {
                 self.acc + gravity
             }
+        }
+    }
+
+    pub fn flags(&self) -> FusionAhrsFlags {
+        FusionAhrsFlags {
+            initializing: self.initialising,
+            angular_rate_recovery: self.angular_rate_recovery,
+            acceleration_recovery: self.acceleration_recovery_trigger
+                > self.acceleration_recovery_timeout,
+            magnetic_recovery: self.magnetic_recovery_trigger > self.magnetic_recovery_timeout,
         }
     }
 }
