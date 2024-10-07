@@ -59,6 +59,13 @@ pub struct FusionAhrsSettings {
     pub recovery_trigger_period: i32,
 }
 
+pub struct FusionAhrsFlags {
+    pub initializing: bool,
+    pub angular_rate_recovery: bool,
+    pub acceleration_recovery: bool,
+    pub magnetic_recovery: bool,
+}
+
 #[derive(Copy, Clone)]
 pub struct Angle {
     pub roll: f32,
