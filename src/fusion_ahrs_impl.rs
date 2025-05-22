@@ -195,7 +195,7 @@ impl FusionAhrs {
             y: 0.0f32,
             z: -1.0f32 * sinf(half_yaw_minus_heading),
         };
-        self.quaternion = self.quaternion * rotation;
+        self.quaternion = rotation * self.quaternion;
     }
 
     pub fn reset(&mut self) {
